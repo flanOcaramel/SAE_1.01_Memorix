@@ -1,0 +1,69 @@
+# ============================================================
+#  .gitignore - projet C (SAE 1.01 Memorix)
+#  Compilateur : gcc (MSYS2 UCRT64) / editeur : Zed
+# ============================================================
+
+# ---------- Fichiers produits par la compilation ----------
+*.exe
+*.o
+*.obj
+*.a
+*.lib
+*.dll
+*.so
+*.dylib
+*.out
+*.d
+# plantages MSYS2/MinGW
+*.stackdump
+
+# ---------- Dossier de build ----------
+# On ignore tout le contenu, sauf le fichier deja versionne.
+build/*
+!build/doc remplissage.txt
+!build/.gitkeep
+
+# ---------- Debogage / symboles ----------
+*.pdb
+*.ilk
+*.map
+*.gdb_history
+.gdb_history
+
+# ---------- clangd / IntelliSense ----------
+.cache/
+compile_commands.json
+.ccls-cache/
+
+# ---------- CMake / Make (si ajoutes plus tard) ----------
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CMakeUserPresets.json
+*.ninja
+.ninja_deps
+.ninja_log
+# On ne ignore PAS un Makefile ecrit a la main.
+
+# ---------- Editeurs ----------
+.vscode/*
+!.vscode/c_cpp_properties.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/settings.json
+.zed/
+.idea/
+*.swp
+*~
+.clangd.local
+
+# ---------- Systeme ----------
+Thumbs.db
+desktop.ini
+.DS_Store
+$RECYCLE.BIN/
+
+# ---------- Divers ----------
+*.log
+*.tmp
+*.bak

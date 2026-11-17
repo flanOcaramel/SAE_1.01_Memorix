@@ -46,38 +46,41 @@ void uiInitialiser(void)
  * Parametres : aucun.
  * Retour : 1, 2, 3 ou 4 ; -1 si l'entree est terminee (fin de fichier).
  *
- * La saisie est redemandee tant qu'elle n'est pas un entier SEUL compris
- * entre 1 et NB_JOUEURS_MAX : "0", "5", "abc" ou "2 3" sont refuses.
- * On utilise la meme technique que lireChoix plus bas : fgets lit une ligne
- * entiere et sscanf avec "%d %c" ne renvoie 1 que s'il n'y a qu'un nombre.
+ * Version simple pour debutants : on utilise scanf("%d") dans une boucle
+ * do...while. Tant que le nombre n'est pas entre 1 et NB_JOUEURS_MAX, on
+ * redemande.
  * -------------------------------------------------------------------------- */
 int uiDemanderNombreJoueurs(void)
 {
-    char ligne[64]; /* tampon recevant la ligne tapee par l'utilisateur */
+    int nbJoueurs = 0; /* 0 n'est pas valide : ca force le 1er passage */
+    int resultat;      /* scanf renvoie le nombre de valeurs lues (1 ici) */
+    int c;             /* sert a vider la fin de la ligne apres scanf */
 
-    for (;;) { /* boucle infinie : on ne sort que par un return */
+    do {
         printf("Nombre de joueurs (1-%d) : ", NB_JOUEURS_MAX);
-        fflush(stdout); /* affiche l'invite avant d'attendre la saisie */
 
-        if (fgets(ligne, sizeof ligne, stdin) == NULL) {
-            return -1; /* entree fermee : on previent le module jeu */
+        /* scanf attend un nombre et le range dans nbJoueurs. */
+        resultat = scanf("%d", &nbJoueurs);
+
+        /* Attention : scanf laisse le "Entree" dans le clavier. On lit les
+           caracteres restants jusqu'au '\n' pour ne pas les laisser au
+           prochain scanf/fgets (sinon la saisie suivante serait faussee). */
+        while ((c = getchar()) != '\n' && c != EOF) {
+            /* on ne fait rien : on jette juste les caracteres lus */
         }
 
-        {
-            int valeur;
-            char fin;
-
-            /* %d lit l'entier, %c detecte un eventuel caractere en trop.
-               Le retour vaut 1 uniquement pour une ligne contenant juste
-               un entier (les espaces autour sont ignores par " %c"). */
-            if (sscanf(ligne, "%d %c", &valeur, &fin) == 1
-                && valeur >= 1 && valeur <= NB_JOUEURS_MAX) {
-                return valeur; /* nombre de joueurs valide */
-            }
+        if (resultat == EOF) {
+            return -1; /* plus d'entree : on arrete proprement */
         }
+        if (resultat != 1) {
+            /* L'utilisateur a tape du texte au lieu d'un nombre. */
+            printf("Entree invalide : tape un nombre entre 1 et %d.\n",
+                   NB_JOUEURS_MAX);
+            nbJoueurs = 0; /* valeur impossible : la boucle redemandera */
+        }
+    } while (nbJoueurs < 1 || nbJoueurs > NB_JOUEURS_MAX);
 
-        printf("Entree invalide : tape un nombre entre 1 et %d.\n", NB_JOUEURS_MAX);
-    }
+    return nbJoueurs;
 }
 
 void uiEffacerEcran(void)

@@ -6,11 +6,19 @@
 /* Active les couleurs ANSI (a appeler une seule fois au debut). */
 void uiInitialiser(void);
 
+/* Demande au joueur combien de personnes vont jouer.
+ * La saisie est redemandee tant qu'elle n'est pas un entier seul compris
+ * entre 1 et NB_JOUEURS_MAX (donc 1 a 4).
+ * Retour : le nombre de joueurs choisi, ou -1 si l'entree est terminee
+ *          (Ctrl+D / Ctrl+Z). */
+int uiDemanderNombreJoueurs(void);
+
 /* Efface l'ecran visible ET l'historique de defilement (scrollback),
  * puis replace le curseur en haut a gauche. */
 void uiEffacerEcran(void);
 
-/* Affiche l'entete, le plateau complet puis le score.
+/* Affiche l'entete, le joueur dont c'est le tour, le plateau (commun a
+ * tous), le score total puis le score de chaque joueur.
  * case1 / case2 : indices des cases retournees pendant le tour, ou -1. */
 void uiAfficherPartie(const Partie *partie, int case1, int case2);
 
@@ -23,7 +31,8 @@ void uiAfficherPaireTrouvee(int a, int b);
 /* Affiche un message rouge quand les deux cases ne forment pas une paire. */
 void uiAfficherPaireRatee(int a, int b);
 
-/* Affiche le message de fin de partie. */
+/* Affiche le message de fin de partie, le score total et le classement
+ * des joueurs (trie par nombre de paires trouvees). */
 void uiAfficherVictoire(const Partie *partie);
 
 /* Affiche le message d'interruption (Ctrl+D / Ctrl+Z). */

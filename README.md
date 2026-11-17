@@ -4,6 +4,20 @@ Jeu de Memory en C : un plateau de 4 lignes x 5 colonnes cache 10 paires de
 chiffres. Le joueur retourne deux cases par tour et doit retrouver toutes
 les paires.
 
+## Joueurs
+
+Au debut de la partie, on choisit le nombre de joueurs (**1 a 4**).
+
+- **Un seul plateau** est partage par tout le monde : les paires deja
+  trouvees restent visibles pour tous les joueurs.
+- Le programme affiche a chaque tour **le joueur actif** et le score de
+  chacun.
+- **Regle de rotation** : si le joueur trouve une paire, il **garde la main**
+  et rejoue ; s'il rate, le tour passe au joueur suivant (avec boucle
+  apres le dernier joueur).
+- Chaque paire trouvee rapporte **1 point au joueur actif** et 1 point au
+  score total. A la fin, un classement est affiche.
+
 ## Organisation du projet
 
 ```

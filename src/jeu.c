@@ -1,5 +1,7 @@
 #include "../include/jeu.h"
 
+#include <stdlib.h>
+
 #include "../include/creation.h"
 #include "../include/ia.h"
 #include "../include/ui.h"
@@ -7,8 +9,45 @@
 /* 3 secondes entre les cartes retournees par l'ordinateur.
    La valeur peut etre remplacee a la compilation avec -DPAUSE_IA=... */
 #ifndef PAUSE_IA
-#define PAUSE_IA 3000
+#define PAUSE_IA 2000
 #endif
+
+/* Echange le Joker avec une carte encore cachee tiree au hasard.
+   La cible peut etre le Joker lui-meme : il reste alors sur place. */
+static void permuterJoker(Partie *partie, int caseJoker)
+{
+    int cachees[NB_CASES];
+    int nbCachees = 0;
+    int i;
+    int cible;
+
+    for (i = 0; i < NB_CASES; i++) {
+        if (!partie->revelees[i]) {
+            cachees[nbCachees] = i;
+            nbCachees++;
+        }
+    }
+
+    /* Cible tiree parmi les cases cachees ; elle peut etre le Joker. */
+    cible = cachees[rand() % nbCachees];
+
+    if (cible != caseJoker) {
+        int temporaire = partie->valeurs[caseJoker];
+
+        partie->valeurs[caseJoker] = partie->valeurs[cible];
+        partie->valeurs[cible] = temporaire;
+        partie->vu[cible] = -1;
+    }
+
+    /* La permutation est invisible : meme si le Joker n'a pas bouge,
+       les joueurs ne peuvent plus se fier a ce qu'ils ont memorise. */
+    partie->vu[caseJoker] = -1;
+}
+
+static void joueurSuivant(Partie *partie)
+{
+    partie->joueurCourant = (partie->joueurCourant + 1) % partie->nbJoueurs;
+}
 
 void jouerPartie(void)
 {
@@ -55,6 +94,25 @@ void jouerPartie(void)
         uiAfficherPlateau(&partie, case1, -1);
         if (tourIA) {
             uiAfficherChoixOrdinateur(case1 + 1);
+        }
+
+        /* Joker en premiere carte : le joueur passe son tour sans en
+           retourner une deuxieme. */
+        if (partie.valeurs[case1] == VALEUR_JOKER) {
+            uiAfficherJoker();
+            if (tourIA) {
+                uiPause(PAUSE_IA);
+            } else {
+                uiAttendreEntree("Appuie sur Entree pour continuer...");
+            }
+            permuterJoker(&partie, case1);
+            joueurSuivant(&partie);
+            /* Tour termine : on repart au debut de la boucle sans
+               demander de deuxieme case. */
+            continue;
+        }
+
+        if (tourIA) {
             uiPause(PAUSE_IA);
         }
 
@@ -63,6 +121,8 @@ void jouerPartie(void)
         } else {
             case2 = uiDemanderCase(&partie, case1, 2);
         }
+        /* Valeur negative : saisie interrompue (EOF). On arrete la partie
+           avant d'utiliser case2 comme indice du tableau. */
         if (case2 < 0) {
             uiAfficherInterruption();
             return;
@@ -74,6 +134,23 @@ void jouerPartie(void)
         uiAfficherPlateau(&partie, case1, case2);
         if (tourIA) {
             uiAfficherChoixOrdinateur(case2 + 1);
+        }
+
+        /* Joker en deuxieme carte : ce n'est pas une paire, le joueur
+           passe son tour. */
+        if (partie.valeurs[case2] == VALEUR_JOKER) {
+            uiAfficherJoker();
+            if (tourIA) {
+                uiPause(PAUSE_IA);
+            } else {
+                uiAttendreEntree("Appuie sur Entree pour continuer...");
+            }
+            permuterJoker(&partie, case2);
+            joueurSuivant(&partie);
+            continue;
+        }
+
+        if (tourIA) {
             uiPause(PAUSE_IA);
         }
 
@@ -90,10 +167,7 @@ void jouerPartie(void)
         } else {
             uiAfficherPaireRatee(partie.valeurs[case1], partie.valeurs[case2]);
             uiAttendreEntree("Appuie sur Entree pour retourner les cases...");
-
-            /* Paire ratee : joueur suivant. Le modulo revient au joueur 0
-               apres le dernier. */
-            partie.joueurCourant = (partie.joueurCourant + 1) % partie.nbJoueurs;
+            joueurSuivant(&partie);
         }
     }
 

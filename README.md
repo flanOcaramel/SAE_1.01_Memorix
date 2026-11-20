@@ -1,8 +1,8 @@
 # SAE 1.01 - Memorix
 
-Jeu de Memory en C : un plateau de 4 lignes x 5 colonnes cache 10 paires de
-chiffres. Le joueur retourne deux cases par tour et doit retrouver toutes
-les paires.
+Jeu de Memory en C : un plateau de 3 lignes x 7 colonnes cache 10 paires de
+chiffres et un Joker. Les joueurs retournent des cases et doivent retrouver
+toutes les paires ; le Joker fait perdre le tour.
 
 ## Joueurs
 
@@ -20,6 +20,20 @@ seul, a plusieurs, contre l'ordinateur, ou avec n'importe quel melange.
 - Chaque paire trouvee rapporte **1 point au joueur actif** et 1 point au
   score total. A la fin, un classement est affiche.
 
+## Joker
+
+Le paquet contient **2n + 1 cartes** : les n paires de chiffres plus un
+Joker (affiche `JK` en jaune).
+
+- Si le joueur retourne le Joker en **premiere** case, il passe son tour
+  sans retourner de deuxieme case.
+- S'il le retourne en **deuxieme** case, ce n'est pas une paire : il passe
+  aussi son tour.
+- A chaque Joker retourne, le Joker est **echange en cachette** avec une
+  carte encore cachee tiree au hasard. Il peut rester sur place. Les joueurs
+  ne voient pas cet echange : ils ne peuvent plus se fier a ce qu'ils
+  avaient memorise sur les deux cases concernees.
+
 ## Joueur ordinateur
 
 L'IA ne triche pas : elle ne lit jamais les chiffres caches directement.
@@ -33,8 +47,12 @@ Sa strategie, dans `src/ia.c` :
 
 1. si elle connait deux cases deja vues ayant le meme chiffre, elle les joue ;
 2. sinon, elle retourne une case encore inconnue pour apprendre un chiffre ;
-3. les tirages au hasard se font sur une liste de cases jouables, jamais
+3. elle ne cherche jamais a former une paire avec le Joker ;
+4. les tirages au hasard se font sur une liste de cases jouables, jamais
    avec une boucle qui pourrait tourner a l'infini.
+
+Quand le Joker est deplace, la memoire `vu[]` des deux cases concernees est
+effacee : l'IA ne triche pas et doit les redecouvrir.
 
 ## Organisation du projet
 
@@ -59,14 +77,16 @@ Sa strategie, dans `src/ia.c` :
 ## Les trois modules
 
 - **`creation`** : construit une nouvelle partie. Il place deux exemplaires de
-  chaque chiffre puis melange le tout. Il ne fait aucun affichage.
+  chaque chiffre, ajoute le Joker puis melange le tout. Il ne fait aucun
+  affichage.
 - **`jeu`** : contient les regles et la boucle de la partie. Il ne fait aucun
   `printf` ni `scanf` : il demande au module `ui` d'afficher et de lire.
 - **`ui`** : tout ce que voit et tape le joueur (plateau, score, messages,
   couleurs, saisie au clavier).
 
 Le fichier `jeu.h` sert de lien commun : il definit la structure `Partie` et
-les constantes `NB_LIGNES`, `NB_COLONNES`, `NB_CASES` et `NB_PAIRES`.
+les constantes `NB_LIGNES`, `NB_COLONNES`, `NB_CASES`, `NB_PAIRES` et
+`VALEUR_JOKER`.
 
 ## Compiler et lancer
 

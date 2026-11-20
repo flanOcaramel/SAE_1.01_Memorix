@@ -12,9 +12,10 @@
 #include <windows.h>
 #endif
 
-/* Codes ANSI : vert, rouge, puis remise a zero du style. */
+/* Codes ANSI : vert, rouge, jaune, puis remise a zero du style. */
 #define CODE_VERT "\033[1;32m"
 #define CODE_ROUGE "\033[1;31m"
+#define CODE_JAUNE "\033[1;33m"
 #define CODE_RAZ "\033[0m"
 
 void uiInitialiser(void)
@@ -45,7 +46,7 @@ int uiDemanderNombreJoueurs(void)
         resultat = scanf("%d", &nbJoueurs);
 
         /* scanf laisse le caractere Entree dans le clavier : on le vide pour
-           ne pas fausser la saisie suivante. */
+           ne pas fausser la saisie suivante. (c'est pas moi qui l'ai trouvé celui la) */
         while ((c = getchar()) != '\n' && c != EOF) {
         }
 
@@ -100,6 +101,7 @@ void uiEffacerEcran(void)
 {
     /* \033[2J efface l'ecran, \033[H replace le curseur en haut a gauche. */
     printf("\033[H\033[2J\033[3J");
+    /* Force l'ecriture immediate : l'ecran doit etre vide avant la suite. */
     fflush(stdout);
 }
 
@@ -121,6 +123,8 @@ static void afficherCase(int numero, int chiffre, int visible, int gagnee)
     /* Chaque case fait 8 caracteres pour garder les colonnes alignees. */
     if (!visible) {
         printf("[%2d]    ", numero);
+    } else if (chiffre == VALEUR_JOKER) {
+        printf("%s  JK    %s", CODE_JAUNE, CODE_RAZ);
     } else if (gagnee) {
         printf("%s  %2d    %s", CODE_VERT, chiffre, CODE_RAZ);
     } else {
@@ -152,7 +156,7 @@ void uiAfficherPartie(const Partie *partie, int case1, int case2)
 {
     int j;
 
-    printf("Memory : %d cases numerotees, %d paires a trouver\n",
+    printf("Memory : %d cases numerotees, %d paires + 1 Joker\n",
            NB_CASES, NB_PAIRES);
 
     /* +1 : les joueurs sont affiches de 1 a nbJoueurs, alors que l'indice
@@ -185,6 +189,12 @@ void uiAfficherPaireTrouvee(int a, int b)
 void uiAfficherPaireRatee(int a, int b)
 {
     printf("\n%sCe n'est pas une paire : %d et %d%s\n", CODE_ROUGE, a, b, CODE_RAZ);
+}
+
+void uiAfficherJoker(void)
+{
+    printf("\n%sC'est le Joker ! Le joueur passe son tour.%s\n",
+           CODE_JAUNE, CODE_RAZ);
 }
 
 void uiAfficherVictoire(const Partie *partie)

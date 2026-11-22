@@ -1,18 +1,11 @@
-#include <stdlib.h> /* srand */
-#include <time.h>   /* time */
+#include <stdlib.h>
+#include <time.h>
 
 #include "../include/jeu.h"
 
-/* --------------------------------------------------------------------------
- * main - Point d'entree du programme.
- *
- * Il reste volontairement tres court : main initialise le hasard puis
- * laisse le module jeu derouler la partie.
- * -------------------------------------------------------------------------- */
 int main(void)
 {
-    /* Sans srand, rand() renverrait toujours la meme suite de nombres.
-       On utilise l'heure courante pour changer le melange a chaque partie. */
+    /* Sans srand, rand() donnerait toujours la meme partie. */
     srand((unsigned)time(NULL));
 
     jouerPartie();

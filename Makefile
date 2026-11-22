@@ -8,8 +8,8 @@ SRC     = src
 INC     = include
 
 # Fichiers du projet
-SOURCES = $(SRC)/main.c $(SRC)/jeu.c $(SRC)/creation.c $(SRC)/ui.c
-OBJECTS = $(BUILD)/main.o $(BUILD)/jeu.o $(BUILD)/creation.o $(BUILD)/ui.o
+SOURCES = $(SRC)/main.c $(SRC)/jeu.c $(SRC)/creation.c $(SRC)/ui.c $(SRC)/ia.c
+OBJECTS = $(BUILD)/main.o $(BUILD)/jeu.o $(BUILD)/creation.o $(BUILD)/ui.o $(BUILD)/ia.o
 TARGET  = memorix
 
 # Cible par defaut : construire le jeu

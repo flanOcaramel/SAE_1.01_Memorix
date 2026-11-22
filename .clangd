@@ -1,0 +1,9 @@
+# Configuration de clangd (analyseur C/C++ de l'editeur).
+# But : lui faire utiliser les en-tetes de MSYS2 UCRT64 (ceux de gcc)
+# au lieu de chercher ceux de Visual Studio, absents sur la machine.
+CompileFlags:
+  Compiler: C:/msys64/ucrt64/bin/gcc.exe
+  Add:
+    - -std=c17
+    - --target=x86_64-w64-windows-gnu
+    - -isystemC:/msys64/ucrt64/include

@@ -1,13 +1,16 @@
 #ifndef JEU_H
 #define JEU_H
 
-#define NB_LIGNES 4
-#define NB_COLONNES 5
-/* Les parentheses sont obligatoires : sans elles, NB_CASES + 1 vaudrait
-   4 * 5 + 1 = 21 au lieu de (4 * 5) + 1. */
+#define NB_LIGNES 3
+#define NB_COLONNES 7
+/* 3 * 7 = 21 cases : 10 paires + le Joker. */
 #define NB_CASES (NB_LIGNES * NB_COLONNES)
-#define NB_PAIRES (NB_CASES / 2)
+/* On retire le Joker avant de diviser par 2. */
+#define NB_PAIRES ((NB_CASES - 1) / 2)
 #define NB_JOUEURS_MAX 4
+
+/* Le Joker vaut 0 : les chiffres des paires vont de 1 a NB_PAIRES. */
+#define VALEUR_JOKER 0
 
 typedef struct {
     int valeurs[NB_CASES];             /* chiffre cache dans chaque case */

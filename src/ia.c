@@ -15,9 +15,12 @@ static int choisirAuHasard(const Partie *partie, int premiere,
     int i;
 
     /* On construit la liste des cases possibles avant de tirer : cela evite
-       une boucle qui retente au hasard et peut tourner longtemps. */
+       * une boucle qui retente au hasard et peut tourner longtemps. */
     for (i = 0; i < NB_CASES; i++) {
+        /* Case deja trouvee ou deja choisie : on l'ignore. */
         if (!estJouable(partie, i, premiere)) {
+            /* arrête immédiatement l’itération en cours et passe à l’itération suivante.
+             * Tout le code restant dans la boucle est ignoré */
             continue;
         }
         if (seulementInconnues && partie->vu[i] != -1) {
@@ -51,8 +54,10 @@ int choisirCaseOrdinateur(const Partie *partie, int premiere)
     int i;
     int j;
 
-    /* Si la premiere case est connue, on joue son partenaire s'il est connu. */
-    if (premiere != -1 && partie->vu[premiere] != -1) {
+    /* Si la premiere case est connue, on joue son partenaire s'il est connu.
+       Le Joker n'a pas de partenaire. */
+    if (premiere != -1 && partie->vu[premiere] != -1
+        && partie->vu[premiere] != VALEUR_JOKER) {
         for (j = 0; j < NB_CASES; j++) {
             if (estJouable(partie, j, premiere)
                 && partie->vu[j] == partie->vu[premiere]) {
@@ -64,7 +69,8 @@ int choisirCaseOrdinateur(const Partie *partie, int premiere)
     /* Au premier choix, on cherche deux cases connues identiques. */
     if (premiere == -1) {
         for (i = 0; i < NB_CASES; i++) {
-            if (!estJouable(partie, i, -1) || partie->vu[i] == -1) {
+            if (!estJouable(partie, i, -1) || partie->vu[i] == -1
+                || partie->vu[i] == VALEUR_JOKER) {
                 continue;
             }
             for (j = i + 1; j < NB_CASES; j++) {

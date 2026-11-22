@@ -17,6 +17,7 @@ void uiAfficherPlateau(const Partie *partie, int case1, int case2);
 void uiAfficherChoixOrdinateur(int numeroCase);
 void uiAfficherPaireTrouvee(int a, int b);
 void uiAfficherPaireRatee(int a, int b);
+void uiAfficherJoker(void);
 void uiAfficherVictoire(const Partie *partie);
 void uiAfficherInterruption(void);
 void uiAttendreEntree(const char *message);
